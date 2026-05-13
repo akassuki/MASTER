@@ -7,11 +7,10 @@ from typing import Optional
 
 import serial
 
-from config import LORA_BAUD, LORA_PORT, LORA_TIMEOUT
+from config import LORA_BAUD, LORA_PORT, LORA_TIMEOUT, CMD_DATA
 
 log = logging.getLogger("lora.serial")
 
-CMD_DATA     = 0x02
 HEADER_LEN   = 6     # CMD + ADDH + ADDL + frag_idx + frag_total + payload_len
 PAYLOAD_MAX  = 52    # byte payload tối đa mỗi fragment
 
