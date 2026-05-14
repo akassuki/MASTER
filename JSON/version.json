@@ -1,0 +1,9 @@
+[
+    {
+        "version": "0.0.4",
+        "firmware": "SlaveIoT2.ino.bin",
+        "signature": "firmware.sig",
+        "node"   : "node_2",
+        "address" : "0x00:0x03"
+    }
+]

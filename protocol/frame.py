@@ -4,7 +4,7 @@ import json
 import logging
 from typing import Dict, Optional
 
-from config import CMD_ACK, CMD_DATA, CMD_POLL, CMD_OTA, GW_ADDH, GW_ADDL, LORA_CH
+from config import CMD_ACK, CMD_DATA, CMD_POLL, GW_ADDH, GW_ADDL, LORA_CH
 
 log = logging.getLogger("lora.frame")
 
@@ -17,11 +17,6 @@ def _xor(data: bytes) -> int:
         c ^= b
     return c
 
-def build_ota_frame(addh: int, addl: int) -> bytes:
-    """OTA: GW → Node, yêu cầu node gửi lại toàn bộ firmware (dùng cho debug)."""
-    body  = bytes([CMD_OTA, GW_ADDH, GW_ADDL])
-    frame = bytes([addh, addl, LORA_CH]) + body + bytes([_xor(body)])
-    return frame
 
 def build_poll_frame(addh: int, addl: int) -> bytes:
     """POLL: GW → Node"""
@@ -33,7 +28,7 @@ def build_poll_frame(addh: int, addl: int) -> bytes:
 def build_ack_frame(addh: int, addl: int, frag_idx: int) -> bytes:
     """ACK: GW → Node, xác nhận đã nhận fragment frag_idx"""
     body  = bytes([CMD_ACK, GW_ADDH, GW_ADDL, frag_idx])
-    frame = bytes([addh, addl, LORA_CH]) + body 
+    frame = bytes([addh, addl, LORA_CH]) + body + bytes([_xor(body)])
     return frame
 
 
@@ -79,3 +74,11 @@ def parse_fragment(raw: bytes, exp_addh: int, exp_addl: int) -> Optional[Dict]:
         "frag_total": frag_total,
         "payload":    raw[6 : 6 + length],
     }
+
+
+def build_ota_frame(addh: int, addl: int) -> bytes:
+    """CMD_OTA: GW → Node, báo node chuyển sang chế độ nhận OTA."""
+    from config import CMD_OTA
+    body  = bytes([CMD_OTA, GW_ADDH, GW_ADDL])
+    frame = bytes([addh, addl, LORA_CH]) + body
+    return frame
